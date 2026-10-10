@@ -3,15 +3,32 @@ const noteForm = document.querySelector("#note-form");
 const noteInput = document.querySelector("#note-input");
 const noteCategory = document.querySelector("#note-category");
 const notesList = document.querySelector("#notes-list");
-const errorMessage = document.querySelector("#error-message");  // new
-const noteCount = document.querySelector("#note-count");        // new
+const errorMessage = document.querySelector("#error-message");
+const noteCount = document.querySelector("#note-count");
+const searchInput = document.querySelector("#search-input");     // new
 
-const MAX_LENGTH = 200;                                         // new
+const MAX_LENGTH = 200;
+const STORAGE_KEY = "notes";                                      // new
+
+// Save the notes array to localStorage                           // new
+function saveNotes() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+}
+
+// Load notes from localStorage (empty array if nothing valid)    // new
+function loadNotes() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return Array.isArray(saved) ? saved : [];
+  } catch (error) {
+    return [];
+  }
+}
 
 // Notes stored as an array of objects
-let notes = [];
+let notes = loadNotes();                                          // changed
 
-// Build the count message for 0, 1 and many notes             // new
+// Build the count message for 0, 1 and many notes
 function updateCount() {
   if (notes.length === 0) {
     noteCount.textContent = "You have no notes yet.";
@@ -22,11 +39,12 @@ function updateCount() {
   }
 }
 
-// Remove one note by id                                        // new
+// Remove one note by id
 function deleteNote(id) {
   notes = notes.filter(function (note) {
     return note.id !== id;
   });
+  saveNotes();                                                    // new
   render();
 }
 
@@ -34,7 +52,21 @@ function deleteNote(id) {
 function render() {
   notesList.replaceChildren();
 
-  notes.forEach(function (note) {
+  // Keep only notes that match the search words                  // new
+  const searchTerm = searchInput.value.trim().toLowerCase();
+  const visibleNotes = notes.filter(function (note) {
+    return note.text.toLowerCase().includes(searchTerm);
+  });
+
+  // Message when a search finds nothing                          // new
+  if (searchTerm !== "" && visibleNotes.length === 0) {
+    const empty = document.createElement("li");
+    empty.className = "no-results";
+    empty.textContent = "No notes match your search.";
+    notesList.appendChild(empty);
+  }
+
+  visibleNotes.forEach(function (note) {                          // changed
     const li = document.createElement("li");
     li.className = "note category-" + note.category;
 
@@ -54,7 +86,7 @@ function render() {
     const deleteBtn = document.createElement("button");
     deleteBtn.type = "button";
     deleteBtn.textContent = "Delete";
-    deleteBtn.addEventListener("click", function () {           // new
+    deleteBtn.addEventListener("click", function () {
       deleteNote(note.id);
     });
 
@@ -62,7 +94,7 @@ function render() {
     notesList.appendChild(li);
   });
 
-  updateCount();                                                // new
+  updateCount();
 }
 
 // Add a note when the form is submitted
@@ -71,7 +103,6 @@ noteForm.addEventListener("submit", function (event) {
 
   const text = noteInput.value.trim();
 
-  // Validation                                                 // new
   if (text === "") {
     errorMessage.textContent = "Please type a note first.";
     return;
@@ -81,7 +112,7 @@ noteForm.addEventListener("submit", function (event) {
     return;
   }
 
-  errorMessage.textContent = "";                                // new
+  errorMessage.textContent = "";
 
   const note = {
     id: Date.now(),
@@ -91,11 +122,15 @@ noteForm.addEventListener("submit", function (event) {
   };
 
   notes.push(note);
+  saveNotes();                                                    // new
   render();
 
   noteInput.value = "";
   noteInput.focus();
 });
 
-// Show the correct count on first load                         // new
+// Filter the list as the user types                              // new
+searchInput.addEventListener("input", render);
+
+// Show saved notes and the correct count on first load
 render();
