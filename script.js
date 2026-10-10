@@ -40,6 +40,8 @@ function updateCount() {
   } else {
     noteCount.textContent = "You have " + notes.length + " notes.";
   }
+
+  clearAllBtn.hidden = notes.length === 0;
 }
 
 // Remove one note by id
