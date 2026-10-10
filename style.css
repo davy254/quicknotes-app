@@ -167,6 +167,9 @@ button:hover {
   background: #b91c1c;
 }
 
+#clear-all[hidden] {
+  display: none;
+}
 
 /* Footer */
 footer {
