@@ -152,6 +152,12 @@ button:hover {
   color: #64748b;
 }
 
+.no-results {
+  color: #64748b;
+  font-style: italic;
+  padding: 12px 0;
+}
+
 
 /* Footer */
 footer {
