@@ -158,6 +158,15 @@ button:hover {
   padding: 12px 0;
 }
 
+#clear-all {
+  background: #dc2626;
+  margin-bottom: 12px;
+}
+
+#clear-all:hover {
+  background: #b91c1c;
+}
+
 
 /* Footer */
 footer {

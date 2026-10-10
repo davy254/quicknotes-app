@@ -5,7 +5,10 @@ const noteCategory = document.querySelector("#note-category");
 const notesList = document.querySelector("#notes-list");
 const errorMessage = document.querySelector("#error-message");
 const noteCount = document.querySelector("#note-count");
-const searchInput = document.querySelector("#search-input");     // new
+const searchInput = document.querySelector("#search-input");  
+const clearAllBtn = document.querySelector("#clear-all"); 
+
+// new
 
 const MAX_LENGTH = 200;
 const STORAGE_KEY = "notes";                                      // new
@@ -131,6 +134,19 @@ noteForm.addEventListener("submit", function (event) {
 
 // Filter the list as the user types                              // new
 searchInput.addEventListener("input", render);
+
+// Delete every note after confirmation
+clearAllBtn.addEventListener("click", function () {
+  if (notes.length === 0) {
+    return;
+  }
+  if (confirm("Delete all notes?")) {
+    notes = [];
+    saveNotes();
+    searchInput.value = "";
+    render();
+  }
+});
 
 // Show saved notes and the correct count on first load
 render();
