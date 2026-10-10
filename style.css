@@ -139,6 +139,20 @@ button:hover {
   border-left-color: #2563eb;
 }
 
+.note-category {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #475569;
+  margin-right: 8px;
+}
+
+.note-date {
+  color: #64748b;
+}
+
+
 /* Footer */
 footer {
   text-align: center;
